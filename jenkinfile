@@ -1,0 +1,24 @@
+node('master')
+{
+    stage('continuousdownload')
+{
+git 'https://github.com/selenium-saikrishna/maven.git'
+}
+stage('continuousbuild')
+{
+    sh label: '', script: 'mvn package'
+}
+stage('continuousdeployment')
+{
+    sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/scriptedpipeline/webapp/target/webapp.war ubuntu@172.31.37.157:/var/lib/tomcat8/webapps/testwebapp.war'
+}
+stage('continuoustesting')
+{
+    git 'https://github.com/selenium-saikrishna/FunctionalTesting'
+    sh label: '', script: 'echo "testingpassed"'
+}
+stage('continuousdelivery')
+{
+sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/scriptedpipeline/webapp/target/webapp.war ubuntu@172.31.34.198:/var/lib/tomcat8/webapps/prodwebapp.war'
+}
+}
